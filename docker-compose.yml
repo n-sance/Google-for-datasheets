@@ -16,3 +16,11 @@ services:
       dockerfile: fulltextsearch/Dockerfile
     ports:
       - 36512:80
+  web-interface:
+    image: web-interface
+    container_name: web-interface
+    build:
+      context: .
+      dockerfile: web-interface/Dockerfile
+    ports:
+      - 3000:3000

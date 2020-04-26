@@ -9,7 +9,7 @@ ENV PATH ./node_modules/.bin:$PATH
 
 # add app
 COPY . ./
-
+EXPOSE 80/tcp
 
 # start app
 CMD ["npm", "start"]
