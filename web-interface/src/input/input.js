@@ -24,6 +24,7 @@ class Input extends React.Component {
     this.handleAddition = this.handleAddition.bind(this);
     this.handleModelChange = this.handleModelChange.bind(this);
     this.sendTags = this.sendTags.bind(this);
+    this.reformatTags = this.reformatTags.bind(this);
   }
 
   handleDelete(i) {
@@ -40,13 +41,24 @@ class Input extends React.Component {
   handleModelChange(event) {
     this.setState({ model: event.target.value });
   }
+
+  reformatTags() {
+    var out = [];
+    var result = "";
+    this.state.tags.forEach(function tk(val) {
+      out.push(val["id"]);
+    });
+    result = out.join(";");
+    return result;
+  }
+
   sendTags() {
     axios
       .get(`http://127.0.0.1:5050/search`, {
         params: {
           "file-id": "456789",
           componentName: this.state.model,
-          keywords: this.state.tags,
+          keywords: this.reformatTags(),
         },
       })
       .then((response) => {
