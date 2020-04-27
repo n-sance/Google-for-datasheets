@@ -4,7 +4,7 @@
 }
 
 form {
-  width: 500px;
+  width: 888px;
 }
 input {
   width: 200px;
@@ -17,6 +17,7 @@ input {
   border: 1px solid #eee;
   padding: 0 4px;
 }
+
 div.ReactTags__tags {
   position: relative;
 }
@@ -102,4 +103,13 @@ button {
   background: rgba(103, 58, 183, 1);
   color: #fff;
   outline: 0;
+}
+
+.Actions {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  align-items: flex-end;
+  flex-direction: column;
+  margin-top: 32px;
 }

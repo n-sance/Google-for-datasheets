@@ -15,7 +15,7 @@ class Input extends React.Component {
 
     this.state = {
       tags: [],
-      model: "fill component name",
+      model: "",
       placeholder: "add component name",
       placeholder1: "add searching tags",
       suggestions: [],
@@ -61,17 +61,21 @@ class Input extends React.Component {
   render() {
     const { tags, suggestions, placeholder } = this.state;
     return (
-      <div>
+      <div className="Upload">
         <form onSubmit={this.sendTags}>
           <input
-            className="div.ReactTags__tagInput"
+            class="ReactTags__tagInputField"
             type="text"
+            placeholder="fill component name here"
+            aria-label="add"
             value={this.state.model}
             onChange={this.handleModelChange}
-          />
-          <button type="submit" value="Отправить">
-            Send
-          </button>
+          ></input>
+          <div className="Actions">
+            <button type="submit" value="Отправить">
+              Send
+            </button>
+          </div>
         </form>
 
         <ReactTags
