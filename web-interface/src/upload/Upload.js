@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Dropzone from "../dropzone/Dropzone";
 import "./Upload.css";
 import Progress from "../progress/Progress";
-import Axios from "axios";
+import axios from "axios";
 
 class Upload extends Component {
   constructor(props) {
@@ -44,39 +44,22 @@ class Upload extends Component {
 
   sendRequest(file) {
     return new Promise((resolve, reject) => {
-      const req = new XMLHttpRequest();
-
-      req.upload.addEventListener("progress", (event) => {
-        if (event.lengthComputable) {
-          const copy = { ...this.state.uploadProgress };
-          copy[file.name] = {
-            state: "pending",
-            percentage: (event.loaded / event.total) * 100,
-          };
-          this.setState({ uploadProgress: copy });
-        }
-      });
-
-      req.upload.addEventListener("load", (event) => {
-        const copy = { ...this.state.uploadProgress };
-        copy[file.name] = { state: "done", percentage: 100 };
-        this.setState({ uploadProgress: copy });
-        resolve(req.response);
-      });
-
-      req.upload.addEventListener("error", (event) => {
-        const copy = { ...this.state.uploadProgress };
-        copy[file.name] = { state: "error", percentage: 0 };
-        this.setState({ uploadProgress: copy });
-        reject(req.response);
-      });
-
       const formData = new FormData();
       formData.append("file", file);
-
-      formData.append("name", "test");
-      req.open("POST", "http://127.0.0.1:5050/upload");
-      req.send(formData);
+      formData.append("name", "naaaaaame");
+      console.log("Llllllldslkdfjksdjgkdghdksgh");
+      axios({
+        crossdomain: true,
+        url: "http://127.0.0.1:5050/upload",
+        method: "POST",
+        data: formData,
+      })
+        .catch(function (error) {
+          console.log("error is: " + error);
+        })
+        .then(() => {
+          this.setState({ uploading: false, successfullUploaded: true });
+        });
     });
   }
 

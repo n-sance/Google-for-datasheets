@@ -41,7 +41,6 @@ class Input extends React.Component {
     this.setState({ model: event.target.value });
   }
   sendTags() {
-    let kk = Object.keys(this.state.tags);
     axios
       .get(`http://127.0.0.1:5050/search`, {
         params: {
