@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { WithContext as ReactTags } from "react-tag-input";
+import PdfView from "../pdf/pdf_view";
 import axios from "axios";
 const KeyCodes = {
   comma: 188,
@@ -16,6 +17,8 @@ class Input extends React.Component {
     this.state = {
       tags: [],
       model: "",
+      temp: "",
+      searchingResultDocumentURL: "",
       placeholder: "add component name",
       placeholder1: "add searching tags",
       suggestions: [],
@@ -25,6 +28,7 @@ class Input extends React.Component {
     this.handleModelChange = this.handleModelChange.bind(this);
     this.sendTags = this.sendTags.bind(this);
     this.reformatTags = this.reformatTags.bind(this);
+    this.displayPdf = this.displayPdf.bind(this);
   }
 
   handleDelete(i) {
@@ -52,44 +56,49 @@ class Input extends React.Component {
     return result;
   }
 
-  sendTags() {
-    axios
-      .get(`http://127.0.0.1:5050/search`, {
+  async getDataFetch() {
+    const response = await fetch(`http://127.0.0.1:5050/search`, {
+      headers: { "Content-Type": "application/json" },
+    });
+    console.log(await response.json());
+  }
+
+  async sendTags() {
+    try {
+      console.log("lllllllllllll");
+      let r = await axios.get(`http://127.0.0.1:5050/search`, {
+        timeout: 80000,
         params: {
-          "file-id": "456789",
-          componentName: this.state.model,
+          "file-id": "some_id",
           keywords: this.reformatTags(),
         },
-      })
-      .then((response) => {
-        console.log(response.data);
-        console.log(response.status);
-        console.log(response.statusText);
-        console.log(response.headers);
-        console.log(response.config);
       });
+      this.setState({ searchingResultDocumentURL: "ff" });
+      console.log(r.headers);
+    } catch (error) {
+      console.log(error);
+      this.setState({ searchingResultDocumentURL: "ff" });
+    }
+  }
+
+  displayPdf() {
+    if (this.state.searchingResultDocumentURL) {
+      return <PdfView />;
+    }
+    return null;
   }
 
   render() {
     const { tags, suggestions, placeholder } = this.state;
     return (
       <div className="Upload">
-        <form onSubmit={this.sendTags}>
-          <input
-            class="ReactTags__tagInputField"
-            type="text"
-            placeholder="fill component name here"
-            aria-label="add"
-            value={this.state.model}
-            onChange={this.handleModelChange}
-          ></input>
+        <form onSubmit={this.getDataFetch}>
           <div className="Actions">
             <button type="submit" value="Отправить">
               Send
             </button>
           </div>
         </form>
-
         <ReactTags
           tags={tags}
           placeholder={placeholder}
@@ -98,6 +107,7 @@ class Input extends React.Component {
           handleAddition={this.handleAddition}
           delimiters={delimiters}
         />
+        <div>{this.displayPdf()}</div>
       </div>
     );
   }

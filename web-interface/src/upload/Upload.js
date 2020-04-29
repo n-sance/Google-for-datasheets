@@ -12,12 +12,18 @@ class Upload extends Component {
       uploading: false,
       uploadProgress: {},
       successfullUploaded: false,
+      model: "",
     };
 
     this.onFilesAdded = this.onFilesAdded.bind(this);
     this.uploadFiles = this.uploadFiles.bind(this);
     this.sendRequest = this.sendRequest.bind(this);
     this.renderActions = this.renderActions.bind(this);
+    this.handleModelChange = this.handleModelChange.bind(this);
+  }
+
+  handleModelChange(event) {
+    this.setState({ model: event.target.value });
   }
 
   onFilesAdded(files) {
@@ -46,8 +52,7 @@ class Upload extends Component {
     return new Promise((resolve, reject) => {
       const formData = new FormData();
       formData.append("file", file);
-      formData.append("name", "naaaaaame");
-      console.log("Llllllldslkdfjksdjgkdghdksgh");
+      formData.append("name", this.state.model);
       axios({
         crossdomain: true,
         url: "http://127.0.0.1:5050/upload",
@@ -130,7 +135,19 @@ class Upload extends Component {
             })}
           </div>
         </div>
-        <div className="Actions">{this.renderActions()}</div>
+        <div className="Actions1">
+          <div className="Input">
+            <input
+              className="ReactTags__tagInputField"
+              type="text"
+              placeholder="fill component name here"
+              aria-label="add"
+              value={this.state.model}
+              onChange={this.handleModelChange}
+            ></input>
+          </div>
+          <div className="Actions">{this.renderActions()}</div>
+        </div>
       </div>
     );
   }
