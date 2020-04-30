@@ -29,7 +29,7 @@ class PdfView extends React.Component {
 
         <div style={{ width: 600 }}>
           <Document
-            file="Vysotskiy_CV.pdf"
+            file={this.props.kek}
             onLoadSuccess={this.onDocumentLoadSuccess}
           >
             <Page pageNumber={pageNumber} width={600} />

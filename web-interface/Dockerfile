@@ -11,4 +11,4 @@ ENV PATH ./node_modules/.bin:$PATH
 COPY . ./
 
 # start app
-CMD ["npm", "start"]
+ENTRYPOINT [ "/bin/sh" ]

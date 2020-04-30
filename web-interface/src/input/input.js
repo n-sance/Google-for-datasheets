@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom";
+//import ReactDOM from "react-dom";
 import { WithContext as ReactTags } from "react-tag-input";
 import PdfView from "../pdf/pdf_view";
 import axios from "axios";
@@ -19,7 +19,7 @@ class Input extends React.Component {
       model: "",
       temp: "",
       searchingResultDocumentURL: "",
-      placeholder: "add component name",
+      placeholder: "add searching tags here",
       placeholder1: "add searching tags",
       suggestions: [],
     };
@@ -31,6 +31,24 @@ class Input extends React.Component {
     this.displayPdf = this.displayPdf.bind(this);
   }
 
+  // componentDidMount() {
+  //   axios
+  //     .get(`http://127.0.0.1:5050/search`, {
+  //       crossdomain: true,
+  //       timeout: 80000,
+  //       params: {
+  //         "file-id": "zzzz_kwwbhpru77uc.pdf",
+  //         keywords: this.reformatTags(),
+  //       },
+  //     })
+  //     .then((response) => {
+  //       this.setState({ searchingResultDocumentURL: response.data["result"] });
+  //       console.log("reload");
+  //     })
+  //     .catch(function (error) {
+  //       console.log("errrrrrr" + error);
+  //     });
+  // }
   handleDelete(i) {
     const { tags } = this.state;
     this.setState({
@@ -56,49 +74,38 @@ class Input extends React.Component {
     return result;
   }
 
-  async getDataFetch() {
-    const response = await fetch(`http://127.0.0.1:5050/search`, {
-      headers: { "Content-Type": "application/json" },
-    });
-    console.log(await response.json());
-  }
-
-  async sendTags() {
-    try {
-      console.log("lllllllllllll");
-      let r = await axios.get(`http://127.0.0.1:5050/search`, {
+  sendTags() {
+    axios
+      .get(`http://127.0.0.1:5050/search`, {
+        crossdomain: true,
         timeout: 80000,
         params: {
-          "file-id": "some_id",
+          "file-id":
+            "/Users/admin/Downloads/chips-data-scraper-master/files/zzzz_kwwbhpru77uc.pdf",
           keywords: this.reformatTags(),
         },
+      })
+      .then((response) => {
+        this.setState({ searchingResultDocumentURL: response.data["result"] });
+        console.log(response.data["result"] + "send");
+      })
+      .catch(function (error) {
+        console.log("er" + error);
       });
-      this.setState({ searchingResultDocumentURL: "ff" });
-      console.log(r.headers);
-    } catch (error) {
-      console.log(error);
-      this.setState({ searchingResultDocumentURL: "ff" });
-    }
   }
 
   displayPdf() {
-    if (this.state.searchingResultDocumentURL) {
-      return <PdfView />;
-    }
-    return null;
+    return <PdfView kek="STM32_HAL_manual.pdf" />;
   }
 
   render() {
+    console.log(this.state.searchingResultDocumentURL);
     const { tags, suggestions, placeholder } = this.state;
     return (
       <div className="Upload">
-        <form onSubmit={this.getDataFetch}>
-          <div className="Actions">
-            <button type="submit" value="Отправить">
-              Send
-            </button>
-          </div>
-        </form>
+        <div className="Actions">
+          <button onClick={this.sendTags}>Search</button>
+        </div>
         <ReactTags
           tags={tags}
           placeholder={placeholder}
