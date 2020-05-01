@@ -28,9 +28,27 @@ class Input extends React.Component {
     this.handleModelChange = this.handleModelChange.bind(this);
     this.sendTags = this.sendTags.bind(this);
     this.reformatTags = this.reformatTags.bind(this);
-    //this.displayPdf = this.displayPdf.bind(this);
+    this.displayPdf = this.displayPdf.bind(this);
   }
 
+  // componentDidMount() {
+  //   axios
+  //     .get(`http://127.0.0.1:5050/search`, {
+  //       crossdomain: true,
+  //       timeout: 80000,
+  //       params: {
+  //         "file-id": "zzzz_kwwbhpru77uc.pdf",
+  //         keywords: this.reformatTags(),
+  //       },
+  //     })
+  //     .then((response) => {
+  //       this.setState({ searchingResultDocumentURL: response.data["result"] });
+  //       console.log("reload");
+  //     })
+  //     .catch(function (error) {
+  //       console.log("errrrrrr" + error);
+  //     });
+  // }
   handleDelete(i) {
     const { tags } = this.state;
     this.setState({
@@ -56,52 +74,35 @@ class Input extends React.Component {
     return result;
   }
 
-  sendTags = () => {
-    var url = new URL("http://127.0.0.1:5050/search"),
-      params = {
-        "component-name": this.state.model,
-        keywords: this.reformatTags(),
-      };
-    Object.keys(params).forEach((key) =>
-      url.searchParams.append(key, params[key])
-    );
-    fetch(url).then((response) => {
-      response.blob().then((blob) => {
-        let url = window.URL.createObjectURL(blob);
-        console.log("link is:  " + url);
-        this.setState({ searchingResultDocumentURL: url });
-        console.log("state is:      " + url);
-        const a = document.createElement("a");
-        a.href = url;
-        a.setAttribute("download", "file.pdf");
-        document.body.appendChild(a);
-        a.click();
+  sendTags() {
+    axios
+      .get(`http://127.0.0.1:5050/search`, {
+        crossdomain: true,
+        timeout: 80000,
+        params: {
+          "file-id":
+            "/Users/admin/Downloads/chips-data-scraper-master/files/zzzz_kwwbhpru77uc.pdf",
+          keywords: this.reformatTags(),
+        },
+      })
+      .then((response) => {
+        this.setState({ searchingResultDocumentURL: response.data["result"] });
+        console.log(response.data["result"] + "send");
+      })
+      .catch(function (error) {
+        console.log("er" + error);
       });
-      //window.location.href = response.url;
-    });
-  };
-  handleModelChange(event) {
-    this.setState({ model: event.target.value });
   }
-  // displayPdf() {
-  //   return <PdfView kek="STM32_HAL_manual.pdf" />;
-  // }
+
+  displayPdf() {
+    return <PdfView kek="STM32_HAL_manual.pdf" />;
+  }
 
   render() {
     console.log(this.state.searchingResultDocumentURL);
     const { tags, suggestions, placeholder } = this.state;
     return (
       <div className="Upload">
-        <div className="Input">
-          <input
-            className="ReactTags__tagInputField"
-            type="text"
-            placeholder="fill component name here"
-            aria-label="add"
-            value={this.state.model}
-            onChange={this.handleModelChange}
-          ></input>
-        </div>
         <div className="Actions">
           <button onClick={this.sendTags}>Search</button>
         </div>
@@ -113,6 +114,7 @@ class Input extends React.Component {
           handleAddition={this.handleAddition}
           delimiters={delimiters}
         />
+        <div>{this.displayPdf()}</div>
       </div>
     );
   }

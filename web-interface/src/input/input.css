@@ -7,13 +7,13 @@ form {
   width: 600px;
 }
 input {
-  width: 200px;
+  width: 800px;
   border-radius: 2px;
   display: inline-block;
   height: 31px;
   margin: 0;
   font-size: 12px;
-  width: 50%;
+  width: 100%;
   border: 1px solid #eee;
   padding: 0 4px;
 }
@@ -24,7 +24,7 @@ div.ReactTags__tags {
 
 /* Styles for the input */
 div.ReactTags__tagInput {
-  width: 200px;
+  width: 300px;
   border-radius: 2px;
   display: inline-block;
 }

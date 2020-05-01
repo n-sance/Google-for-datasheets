@@ -140,7 +140,7 @@ class Upload extends Component {
             <input
               className="ReactTags__tagInputField"
               type="text"
-              placeholder="fill component name here"
+              placeholder="fill a component name that uploading file specifies"
               aria-label="add"
               value={this.state.model}
               onChange={this.handleModelChange}

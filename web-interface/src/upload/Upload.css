@@ -103,6 +103,7 @@ button {
 
 .Input {
   align-items: flex-start;
+  width: 300px;
 }
 
 button:disabled {
