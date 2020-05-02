@@ -11,5 +11,5 @@ ENV PATH ./node_modules/.bin:$PATH
 COPY web-interface/ .
 
 # start app
-#CMD ["npm", "start"]
-CMD ["sleep", "100000"]
+CMD ["npm", "start"]
+#CMD ["sleep", "100000"]

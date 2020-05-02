@@ -9,13 +9,13 @@ services:
     ports:
       - 27017:27017
   #fulltextsearch:
-    #image: fulltextsearch
-    #container_name: fulltextsearch
-    #build:
-      #context: .
-      #dockerfile: fulltextsearch/Dockerfile
-    #ports:
-      #- 36512:80
+  #image: fulltextsearch
+  #container_name: fulltextsearch
+  #build:
+  #context: .
+  #dockerfile: fulltextsearch/Dockerfile
+  #ports:
+  #- 36512:80
   web-backend:
     image: web-backend
     container_name: web-backend
