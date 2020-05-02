@@ -2,13 +2,14 @@
 FROM node:13.12.0-alpine
 
 # set working directory
-WORKDIR ./
+WORKDIR /
 
-# add `/app/node_modules/.bin` to $PATH
+# add /app/node_modules/.bin to $PATH
 ENV PATH ./node_modules/.bin:$PATH
 
 # add app
-COPY . ./
+COPY web-interface/ /
 
 # start app
-CMD ["npm", "start"]
+#CMD ["npm", "start"]
+CMD ["sleep", "100000"]
