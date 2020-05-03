@@ -1,5 +1,7 @@
 from flask import Flask, jsonify, request, send_file
 import scraper
+from glob import glob
+import os
 
 app = Flask(__name__)
 
@@ -39,9 +41,24 @@ def upload_doc():
         attach the name as an additional argument
     """
     file = request.files["file"]
-    meta_data = {"name": request.form["name"]}
+    meta_data = {"name": request.form["name"].lower()}
     file_id = save_file(meta_data, file)
     return jsonify({"file_id": file_id})
+
+
+@app.route("/search_by_fileid", methods=["GET"])
+def search_by_fileid():
+    """
+        call this to search in a file using given keywords
+        provide following arguments in a query:
+            file-id = STRING
+            keywords = TAG1;TAG2
+    """
+    file_id = request.form["file-id"]
+    tags = [t.lower() for t in request.form["keywords"].split(";")]
+    search_result = scraper.search(file_id, tags)
+    return jsonify(search_result)
+
 
 
 @app.route("/search", methods=["GET"])
@@ -52,11 +69,19 @@ def search():
             component-name =
             keywords = TAG1;TAG2
     """
-    # componentName = request.args["component-name"]
-    file_id = request.form["file-id"]
-    tags = [t.lower() for t in request.form["keywords"].split(";")]
+    component_name = request.args["component-name"].lower()
+    files = glob(scraper.get_file_link("*"))
+    files.sort(key=os.path.getmtime)
+    print(component_name)
+    matching_files = [f for f in files if component_name in f]
+    print(matching_files)
+    file_id = matching_files[-1]
+    tags = [t.lower() for t in request.args["keywords"].split(";")]
+    print(tags)
+    if len(tags) < 1:
+        return "ERROR: NO TAGS"
     search_result = scraper.search(file_id, tags)
-    return send_file(search_result, as_attachment=True)
+    return send_file("result.pdf", as_attachment=True)
 
 
 @app.after_request

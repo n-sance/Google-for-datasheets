@@ -112,6 +112,7 @@ def search_pages(inputpdf, tags, pdfname):
     pages = []
     for hit in res['hits']['hits']:
         pages.append({int(hit["_id"])+1 : hit["_score"]})
+    print(pages)
     return pages
 
 
