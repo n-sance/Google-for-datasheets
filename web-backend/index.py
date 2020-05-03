@@ -29,7 +29,7 @@ def save_file(meta, file):
 
 @app.route("/")
 def index():
-    return "test text"
+    return "you are a king"
 
 
 @app.route("/upload", methods=["POST"])
@@ -52,9 +52,10 @@ def search():
             component-name =
             keywords = TAG1;TAG2
     """
-    componentName = request.args["component-name"]
-    tags = [t.lower() for t in request.args["keywords"].split(";")]
-    search_result = scraper.search(componentName, tags)
+    # componentName = request.args["component-name"]
+    file_id = request.form["file-id"]
+    tags = [t.lower() for t in request.form["keywords"].split(";")]
+    search_result = scraper.search(file_id, tags)
     return send_file(search_result, as_attachment=True)
 
 
@@ -68,4 +69,4 @@ def after_request(response):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port='5050', debug=True)
+    app.run(host='127.0.0.1', port='5050', debug=True)

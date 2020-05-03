@@ -1,1 +1,7 @@
 *.swp
+/web-backend/files/
+.DS_Store
+.idea/modules.xml
+.idea/pdf-search-service.iml
+.idea/workspace.xml
+web-backend/page.pdf
