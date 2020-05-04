@@ -147,11 +147,49 @@ def search_pages(inputpdf, tags, pdfname):
 #     print('more_appr:   ' + str(more_appropriate_page) + '  ' + str(tags))
 #     return more_appropriate_page
 
-def search_across_all_docs(tags, component_name):
+
+
+def search_across_specific_docs(tags, component_name):
     es = Elasticsearch()
-    tags.append(component_name.split('_')[0])
+    print('component name inside ES:  ' + str(component_name) + ' ' + str(type(component_name)))
+    # if component_name:
+    #     tags.append(component_name[0].split('_')[0])
     query_from_user = ' '.join(tags)
     indices = es.indices.get_alias("*")  # etract all created indexes
+    filtered_indices = {}
+    for k, v in indices:
+        if k.startswith(component_name):
+            filtered_indices[k] = v
+    print('indices:   ' + str(indices) + ' ' + str(type(indices)))
+    print('filtered indices' + str(filtered_indices))
+    search_result = {}
+    print('query from user:' + str(query_from_user))
+    for index in filtered_indices:
+        res = es.search(index=index, body={"query": {
+            "query_string": {
+                "query": query_from_user
+            }}})
+        pages = []
+        for hit in res['hits']['hits']:
+            pages.append({int(hit["_id"]): hit["_score"]})
+        search_result[index] = pages
+    more_appropriate_page = {}
+    for index in search_result:
+        for pages in search_result[index]:
+            for page in pages:
+                score = pages[page]
+                more_appropriate_page[score] = [index,page]
+    return more_appropriate_page
+
+
+def search_across_all_docs(tags, component_name):
+    es = Elasticsearch()
+    print('component name inside ES:  ' + str(component_name) + ' ' + str(type(component_name)))
+    if component_name:
+        tags.append(component_name)
+    query_from_user = ' '.join(tags)
+    indices = es.indices.get_alias("*")  # etract all created indexes
+    print('indices:   ' + str(indices) + ' ' + str(type(indices)))
     search_result = {}
     print('query from user:' + str(query_from_user))
     for index in indices:

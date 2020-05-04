@@ -66,34 +66,40 @@ def search_by_fileid():
 
 @app.route("/search", methods=["GET"])
 def search():
-    """
-        call this to search in a file using given keywords
-        provide following arguments in a query:
-            component-name =
-            keywords = TAG1;TAG2
-    """
-    component_name = request.args["component-name"].lower()
-    print('compname:   ' + component_name)
-    all_docs = request.args["all-docs-search"]
-   # last_doc_only = request.args["prev-doc"]
+    file_id = []
 
+    component_name = request.args["component-name"].lower()
+    all_docs = 'false' #request.args["all-docs-search"]
+    last_doc_only = 'true'
+
+    #casting flag states to bool
     all_docs_flag = True if all_docs == 'true' else False
-    print('all_docs:  ' + str(all_docs_flag))
-    #last_doc_only_flag = True if last_doc_only == 'true' else False
+    last_doc_only_flag = True if last_doc_only == 'true' else False
+
     files = glob(scraper.get_file_link("*"))
-    print('files:  ' + str(files))
-    files.sort(key=os.path.getmtime)
-    if component_name:
-        matching_files = [f for f in files if component_name in f]
-        print('matching files:  ' + str(matching_files))
-        file_id = matching_files[-1]
-    else:
-        file_id = ""
+
+    #search files that relates to component name
+    matching_files = [f for f in files if component_name in f]
+    #sorting matching files in uploaded time order
+    matching_files.sort(key=os.path.getmtime)
+    print('mathcing files after sorting:  ' + str(matching_files))
+    #if user wants to search to all documentation related to component name (multisearch)
+    if not all_docs_flag and not last_doc_only_flag:
+        file_id = matching_files
+    #if user wants to search through all database and specifying component name is not necceassy (multisearch)
+    elif all_docs_flag and not last_doc_only_flag:
+        if not component_name:
+            file_id = []
+        else:
+            file_id.append(component_name)
+    #if user wants to search in the latest uploaded document. specifying component is not neccessary
+    elif not all_docs_flag and last_doc_only_flag:
+        print('latest file:  ' + matching_files[-1])
+        file_id.append(matching_files[-1])
     tags = [t.lower() for t in request.args["keywords"].split(";")]
-    print(tags)
     if len(tags) < 1:
         return "ERROR: NO TAGS"
-    search_result = scraper.search(file_id, tags, all_docs_flag)
+    search_result = scraper.search(file_id, tags, all_docs_flag, last_doc_only_flag)
     if (search_result == 'Nothing found'):
         return {}   #todo handler on frontend side
     else:
