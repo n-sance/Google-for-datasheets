@@ -73,19 +73,27 @@ def search():
             keywords = TAG1;TAG2
     """
     component_name = request.args["component-name"].lower()
-    #all_docs = request.args["all-docs-search"]
-    all_docs = True if request.args["all-docs-search"] == 'true' else False
+    print('compname:   ' + component_name)
+    all_docs = request.args["all-docs-search"]
+   # last_doc_only = request.args["prev-doc"]
+
+    all_docs_flag = True if all_docs == 'true' else False
+    print('all_docs:  ' + str(all_docs_flag))
+    #last_doc_only_flag = True if last_doc_only == 'true' else False
     files = glob(scraper.get_file_link("*"))
     print('files:  ' + str(files))
     files.sort(key=os.path.getmtime)
-    matching_files = [f for f in files if component_name in f]
-    print('matching files:  ' + str(matching_files))
-    file_id = matching_files[-1]
+    if component_name:
+        matching_files = [f for f in files if component_name in f]
+        print('matching files:  ' + str(matching_files))
+        file_id = matching_files[-1]
+    else:
+        file_id = ""
     tags = [t.lower() for t in request.args["keywords"].split(";")]
     print(tags)
     if len(tags) < 1:
         return "ERROR: NO TAGS"
-    search_result = scraper.search(file_id, tags, all_docs)
+    search_result = scraper.search(file_id, tags, all_docs_flag)
     if (search_result == 'Nothing found'):
         return {}   #todo handler on frontend side
     else:

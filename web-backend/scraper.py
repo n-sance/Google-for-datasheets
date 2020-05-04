@@ -16,50 +16,50 @@ def search(filename="swau123.pdf", tags=["RESET", "33"], alldocs= False):
     """
     filename = filename.rsplit("/", 1)[-1]
     print('filename' + filename)
-    resp = searcher.search_in_download_doc(tags, filename) # [{2: 1.0015404}]
-    print('response_text: ' + str(resp))
-    try:
-        if (alldocs == True):
-            resp = searcher.search_across_all_docs(tags, filename)
 
-            print('_________resp content: ' + str(resp))
-            filename, page = resp[max(list(resp.keys()))]
-            print('single_doc:filename:  ' + str(filename))
-            print('single_doc:page:    ' + page)
-            #print('pagenumber:  ' + str(resp[p][1]))
-            #print('pagenumber:  ' + str(page_number))
-            page_number = int(page)
-            output_writer = PdfFileWriter()
+    # try:
+    if (alldocs == True):
+        print('inside')
+        resp = searcher.search_across_all_docs(tags, filename)
 
-            inputpdf = PdfFileReader(open(get_file_link(filename), "rb"))
-            output_writer.addPage(inputpdf.getPage(page_number))
+        print('_________resp content: ' + str(resp))
+        filename, page = resp[max(list(resp.keys()))]
+        print('single_doc:filename:  ' + str(filename))
+        print('single_doc:page:    ' + str(page))
+        #print('pagenumber:  ' + str(resp[p][1]))
+        #print('pagenumber:  ' + str(page_number))
+        page_number = int(page)
+        output_writer = PdfFileWriter()
 
-            with open("result.pdf", "wb") as outputStream:
-                output_writer.write(outputStream)
-                print("pdf file has been rewritted")
+        inputpdf = PdfFileReader(open(get_file_link(filename), "rb"))
+        output_writer.addPage(inputpdf.getPage(page_number))
 
-            return resp
-        else:
-            #page_number = list(resp[0].keys())[0] - 1
-            print('resp content: ' + str(resp))
-            filename, page = resp[max(list(resp.keys()))]
-            print('single_doc:filename:  ' + str(filename))
-            print('single_doc:page:    ' + page)
-            #print('pagenumber:  ' + str(resp[p][1]))
-            #print('pagenumber:  ' + str(page_number))
-            page_number = int(page)
-            output_writer = PdfFileWriter()
+        with open("result.pdf", "wb") as outputStream:
+            output_writer.write(outputStream)
+            print("pdf file has been rewritted")
 
-            inputpdf = PdfFileReader(open(get_file_link(filename), "rb"))
-            output_writer.addPage(inputpdf.getPage(page_number))
+        return resp
+    else:
+        resp = searcher.search_in_download_doc(tags, filename) # [{2: 1.0015404}]
+        print('response_text_single_doc: ' + str(resp))
+        #page_number = list(resp[0].keys())[0] - 1
+        filename, page = resp[max(list(resp.keys()))]
+        print('single_doc:filename:  ' + str(filename))
+        print('single_doc:page:    ' + page)
+        #print('pagenumber:  ' + str(resp[p][1]))
+        #print('pagenumber:  ' + str(page_number))
+        page_number = int(page)
+        output_writer = PdfFileWriter()
 
-            with open("result.pdf", "wb") as outputStream:
-                output_writer.write(outputStream)
-                print("pdf file has been rewritted")
+        inputpdf = PdfFileReader(open(get_file_link(filename), "rb"))
+        output_writer.addPage(inputpdf.getPage(page_number))
 
-            return resp
-    except:
-        return('Nothing found')
+        with open("result.pdf", "wb") as outputStream:
+            output_writer.write(outputStream)
+            print("pdf file has been rewritted")
+        return resp
+    # except:
+        # return('Nothing found')
 
 
 

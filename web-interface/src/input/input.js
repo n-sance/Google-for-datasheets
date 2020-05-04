@@ -60,7 +60,7 @@ class Input extends React.Component {
     var url = new URL("http://127.0.0.1:5050/search"),
       params = {
         "component-name": this.state.model,
-        "all-docs-search": false,
+        "all-docs-search": true,
         keywords: this.reformatTags(),
       };
     Object.keys(params).forEach((key) =>

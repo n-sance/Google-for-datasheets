@@ -102,15 +102,10 @@ def index_after_uploading(pdfname):
     answer = page_indexing(inputpdf, vision_url,
                            iam_token, folder_id, es, pdfname)
 
+
 def search_pages(inputpdf, tags, pdfname):
-    # my private data
-    oauth_token = "AgAAAAADng-8AATuwdOGGyg3l0VHmz1w3Ighmvc"
-    iam_token = get_iam_token(oauth_token)
-    folder_id = my_folder_id
     es = Elasticsearch()
-    vision_url = 'https://vision.api.cloud.yandex.net/vision/v1/batchAnalyze'
-    answer = page_indexing(inputpdf, vision_url,
-                           iam_token, folder_id, es, pdfname)
+
     query_from_user = ' '.join(tags)
     res = es.search(index=str.lower(pdfname), body={"query": {
         "query_string": {
@@ -125,6 +120,32 @@ def search_pages(inputpdf, tags, pdfname):
     print('res___ :  ' + str(res))
     print('more_appr:   ' + str(more_appropriate_page) + '  ' + str(tags))
     return more_appropriate_page
+
+
+
+# def search_pages(inputpdf, tags, pdfname):
+#     # my private data
+#     oauth_token = "AgAAAAADng-8AATuwdOGGyg3l0VHmz1w3Ighmvc"
+#     iam_token = get_iam_token(oauth_token)
+#     folder_id = my_folder_id
+#     es = Elasticsearch()
+#     vision_url = 'https://vision.api.cloud.yandex.net/vision/v1/batchAnalyze'
+#     answer = page_indexing(inputpdf, vision_url,
+#                            iam_token, folder_id, es, pdfname)
+#     query_from_user = ' '.join(tags)
+#     res = es.search(index=str.lower(pdfname), body={"query": {
+#         "query_string": {
+#             "query": query_from_user
+#         }}})
+#     more_appropriate_page = {}
+#     for hit in res['hits']['hits']:
+#         more_appropriate_page[hit["_score"]] = [pdfname,hit["_id"]]
+#     # pages = []
+#     # for hit in res['hits']['hits']:
+#     #     pages.append({int(hit["_id"]): hit["_score"]})
+#     print('res___ :  ' + str(res))
+#     print('more_appr:   ' + str(more_appropriate_page) + '  ' + str(tags))
+#     return more_appropriate_page
 
 def search_across_all_docs(tags, component_name):
     es = Elasticsearch()
