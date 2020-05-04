@@ -10,13 +10,13 @@ from pathlib import Path
 from elasticsearch import Elasticsearch
 import io
 
-ya_token = 'CggVAgAAABoBMxKABDM8yywhBhQWajzMY2w5Xl7MZYc15h8MrgWk2ulgXIm-cLbFVqRYDtnhK3DdYqtZ_HxafBSemnlDI_e_4fSRgDEfGKMGfPA14sow4XqPMVa6BcvWXEqz-cWd_JxtBF4jI42eGvE0PZxzP9TM-8B0ZLavTkPd21Fn5UEM4CXE_aC_o70p7Yc5XqfGJSxKOZf5kSuasSnvlXdrfXx-nkt6N2Tr8gnBZPw8Cx_0bsG-GfW7DNQr19Fmbyi5PPnsPfNyytjcxNi1T_Sm8MGw-ezeltHQodgYLRa11rNcsxL8t6DmhJxrsqb0-MwKo9sxrF1Y-8d3h_xu3RdSg90lf_muXCZlEXoV1JzLzTQgaGfdZCC-uc5Xa90ZNE-yApMxj10gdH50OCL5ogA2_tjOVibBumd3MPpZoXNBvflXxEujt5D-165_MCXycsVg_bD-c877sku6p_tdz0B96HfELK5giHh3JHHAh4wmKxhkuxIE4blAbjovfRHGYZJ8sz4E_PhAhJIVmq-REb0w2WrWaFODEpZXHZI77Msic4c9viZTxcy2vPrmr8SzLvNDm897B-hxrAWbHuCp1XVA-bA8Hp-g7A9AcTNmaF3IdjgVyu6d-pRw_XH7ZxDwYpSmlVufqsKlTqzmQ93KPFaRW8SNqilUhAi26L8GXIsXDgz_BeoRzOtuGiQQ69-p9QUYq7Gs9QUiFgoUYWplOHRpNTRmcjEwbG1jNWxncTc='
 my_folder_id = 'b1gcfjsk4iff6ub1luh8'
 
 # Функция возвращает IAM-токен для аккаунта на Яндексе. В данный момент не используется
 
 
-def get_iam_token(iam_url, oauth_token):
+def get_iam_token(oauth_token):
+    iam_url = 'https://iam.api.cloud.yandex.net/iam/v1/tokens'
     response = post(iam_url, json={"yandexPassportOauthToken": oauth_token})
     json_data = json.loads(response.text)
     if json_data is not None and 'iamToken' in json_data:
@@ -69,12 +69,12 @@ def extract_values(obj, key):
     return results
 
 
-def addToElasticSearch(pdfName, page, text_result, es):
+def add_to_elasticSearch(pdfName, page, text_result, es):
     doc = {"text": text_result}
     res = es.index(index=str.lower(pdfName), id=page, body=doc)
 
 
-def pageIndexing(inputpdf, vision_url, iam_token, folder_id, es, pdfname):
+def page_indexing(inputpdf, vision_url, iam_token, folder_id, es, pdfname):
     for page in range(inputpdf.getNumPages()):
         print(page)
         writer = PdfFileWriter()
@@ -88,35 +88,63 @@ def pageIndexing(inputpdf, vision_url, iam_token, folder_id, es, pdfname):
             text_result = ' '.join(
                 map(str, extract_values(response_json, 'text')))
             print(text_result)
-            addToElasticSearch(pdfname, page, text_result, es)
+            add_to_elasticSearch(pdfname, page, text_result, es)
 
 
-def searchPages(inputpdf, tags, pdfname):
+def search_pages(inputpdf, tags, pdfname):
     # my private data
-    iam_token = ya_token
+    oauth_token = "AgAAAAADng-8AATuwdOGGyg3l0VHmz1w3Ighmvc"
+    iam_token = get_iam_token(oauth_token)
     folder_id = my_folder_id
     es = Elasticsearch()
     vision_url = 'https://vision.api.cloud.yandex.net/vision/v1/batchAnalyze'
-    answer = pageIndexing(inputpdf, vision_url, iam_token, folder_id, es, pdfname)
+    answer = page_indexing(inputpdf, vision_url,
+                           iam_token, folder_id, es, pdfname)
     query_from_user = ' '.join(tags)
-    res = es.search(index= pdfname, body={"query": {
+    res = es.search(index=str.lower(pdfname), body={"query": {
         "query_string": {
             "query": query_from_user
         }}})
     pages = []
     for hit in res['hits']['hits']:
-        pages.append({int(hit["_id"])+1 : hit["_score"]})
+        pages.append({int(hit["_id"]): hit["_score"]})
     return pages
 
 
-def main():
-    inputpdf = PdfFileReader(open("swau123.pdf", "rb"))
-    tags = ["RESET", "33"]
-    pdfname = "swau123.pdf"
-    pages = searchPages(inputpdf, tags, pdfname)
+def search_across_all_docs(tags):
+    es = Elasticsearch()
+    query_from_user = ' '.join(tags)
+    indices = es.indices.get_alias("*")  # etract all created indexes
+    search_result = {}
+    for index in indices:
+        res = es.search(index=index, body={"query": {
+            "query_string": {
+                "query": query_from_user
+            }}})
+        pages = []
+        for hit in res['hits']['hits']:
+            pages.append({int(hit["_id"]): hit["_score"]})
+        search_result[index] = pages
+    more_appropriate_page = {}
+    for index in search_result:
+        for pages in search_result[index]:
+            for page in pages:
+                score = pages[page]
+                more_appropriate_page[score] = [index,page]
+    return more_appropriate_page
+
+
+def search_in_download_doc(inputpdf, tags, pdfname):
+    pages = search_pages(inputpdf, tags, pdfname)
     print("serach tags:" + str(tags), pages)
     return pages
 
 
-if __name__ == '__main__':
-    main()
+# inputpdf = PdfFileReader(open("swau123.pdf", "rb"))
+# tags = ["development", "V"]
+# pdfname = "swau123.pdf"
+
+# if __name__ == '__main__':
+#     search_in_download_doc(inputpdf, tags, pdfname)
+
+#print(search_across_all_docs(tags))
