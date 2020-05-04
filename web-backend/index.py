@@ -81,7 +81,7 @@ def search():
     print(tags)
     if len(tags) < 1:
         return "ERROR: NO TAGS"
-    search_result = scraper.search(file_id, tags, all_docs)
+    search_result = scraper.search(file_id, tags)
     if (search_result == 'Nothing found'):
         return {}   #todo handler on frontend side
     else:
