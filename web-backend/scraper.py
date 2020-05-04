@@ -9,6 +9,7 @@ def get_file_link(filename):
 
 
 def search(filename="swau123.pdf", tags=["RESET", "33"], alldocs= False):
+    print('aldocs:   ' + str(alldocs))
     """
         does operations with DB and Yandex Vision and returns the result
         :returns: {RESULT}
@@ -18,16 +19,16 @@ def search(filename="swau123.pdf", tags=["RESET", "33"], alldocs= False):
     resp = searcher.search_in_download_doc(tags, filename) # [{2: 1.0015404}]
     print('response_text: ' + str(resp))
     try:
-        if (alldocs ==True):
+        if (alldocs == True):
             resp = searcher.search_across_all_docs(tags, filename)
-            print('alldocs?')
-        else:
-            #page_number = list(resp[0].keys())[0] - 1
-            p = next(iter(resp))
 
-            print('pagenumber:  ' + str(resp[p][1]))
+            print('_________resp content: ' + str(resp))
+            filename, page = resp[max(list(resp.keys()))]
+            print('single_doc:filename:  ' + str(filename))
+            print('single_doc:page:    ' + page)
+            #print('pagenumber:  ' + str(resp[p][1]))
             #print('pagenumber:  ' + str(page_number))
-            page_number = int(resp[p][1])
+            page_number = int(page)
             output_writer = PdfFileWriter()
 
             inputpdf = PdfFileReader(open(get_file_link(filename), "rb"))
@@ -38,7 +39,26 @@ def search(filename="swau123.pdf", tags=["RESET", "33"], alldocs= False):
                 print("pdf file has been rewritted")
 
             return resp
-    except IndexError:
+        else:
+            #page_number = list(resp[0].keys())[0] - 1
+            print('resp content: ' + str(resp))
+            filename, page = resp[max(list(resp.keys()))]
+            print('single_doc:filename:  ' + str(filename))
+            print('single_doc:page:    ' + page)
+            #print('pagenumber:  ' + str(resp[p][1]))
+            #print('pagenumber:  ' + str(page_number))
+            page_number = int(page)
+            output_writer = PdfFileWriter()
+
+            inputpdf = PdfFileReader(open(get_file_link(filename), "rb"))
+            output_writer.addPage(inputpdf.getPage(page_number))
+
+            with open("result.pdf", "wb") as outputStream:
+                output_writer.write(outputStream)
+                print("pdf file has been rewritted")
+
+            return resp
+    except:
         return('Nothing found')
 
 

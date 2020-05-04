@@ -92,6 +92,16 @@ def page_indexing(inputpdf, vision_url, iam_token, folder_id, es, pdfname):
             add_to_elasticSearch(pdfname, page, text_result, es)
 
 
+def index_after_uploading(pdfname):
+    inputpdf = PdfFileReader(open(get_link("files", pdfname), "rb"))
+    oauth_token = "AgAAAAADng-8AATuwdOGGyg3l0VHmz1w3Ighmvc"
+    iam_token = get_iam_token(oauth_token)
+    folder_id = my_folder_id
+    es = Elasticsearch()
+    vision_url = 'https://vision.api.cloud.yandex.net/vision/v1/batchAnalyze'
+    answer = page_indexing(inputpdf, vision_url,
+                           iam_token, folder_id, es, pdfname)
+
 def search_pages(inputpdf, tags, pdfname):
     # my private data
     oauth_token = "AgAAAAADng-8AATuwdOGGyg3l0VHmz1w3Ighmvc"
@@ -116,12 +126,13 @@ def search_pages(inputpdf, tags, pdfname):
     print('more_appr:   ' + str(more_appropriate_page) + '  ' + str(tags))
     return more_appropriate_page
 
-
 def search_across_all_docs(tags, component_name):
     es = Elasticsearch()
-    query_from_user = ' '.join(tags).join(component_name)
+    tags.append(component_name.split('_')[0])
+    query_from_user = ' '.join(tags)
     indices = es.indices.get_alias("*")  # etract all created indexes
     search_result = {}
+    print('query from user:' + str(query_from_user))
     for index in indices:
         res = es.search(index=index, body={"query": {
             "query_string": {

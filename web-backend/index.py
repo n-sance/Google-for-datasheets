@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, send_file
 import scraper
 from glob import glob
 import os
+from searcher import index_after_uploading
 
 app = Flask(__name__)
 
@@ -43,6 +44,8 @@ def upload_doc():
     file = request.files["file"]
     meta_data = {"name": request.form["name"].lower()}
     file_id = save_file(meta_data, file)
+    print('file-id:  ' + file_id)
+    index_after_uploading(file_id)
     return jsonify({"file_id": file_id})
 
 
@@ -70,18 +73,19 @@ def search():
             keywords = TAG1;TAG2
     """
     component_name = request.args["component-name"].lower()
-    all_docs = request.args["all-docs-search"]
+    #all_docs = request.args["all-docs-search"]
+    all_docs = True if request.args["all-docs-search"] == 'true' else False
     files = glob(scraper.get_file_link("*"))
+    print('files:  ' + str(files))
     files.sort(key=os.path.getmtime)
-    print(component_name)
     matching_files = [f for f in files if component_name in f]
-    print(matching_files)
+    print('matching files:  ' + str(matching_files))
     file_id = matching_files[-1]
     tags = [t.lower() for t in request.args["keywords"].split(";")]
     print(tags)
     if len(tags) < 1:
         return "ERROR: NO TAGS"
-    search_result = scraper.search(file_id, tags)
+    search_result = scraper.search(file_id, tags, all_docs)
     if (search_result == 'Nothing found'):
         return {}   #todo handler on frontend side
     else:
