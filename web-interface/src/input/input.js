@@ -3,10 +3,18 @@ import React from "react";
 import { WithContext as ReactTags } from "react-tag-input";
 import PdfView from "../pdf/pdf_view";
 import axios from "axios";
+import Select from "react-select";
+import "bootstrap/dist/css/bootstrap.css";
 const KeyCodes = {
   comma: 188,
   enter: 13,
 };
+
+const options = [
+  { value: "All", label: "All DB" },
+  { value: "Components", label: "Component related" },
+  { value: "Latest", label: "Latest upload" },
+];
 
 const delimiters = [KeyCodes.comma, KeyCodes.enter];
 
@@ -22,6 +30,9 @@ class Input extends React.Component {
       placeholder: "add searching tags here",
       placeholder1: "add searching tags",
       suggestions: [],
+      selectedOption: null,
+      all_docs_search_flag: false,
+      latest_uploaded_doc_search_flag: false,
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddition = this.handleAddition.bind(this);
@@ -88,9 +99,15 @@ class Input extends React.Component {
   //   return <PdfView kek="STM32_HAL_manual.pdf" />;
   // }
 
+  handleChange = (selectedOption) => {
+    this.setState({ selectedOption });
+    console.log(`Option selected:`, selectedOption);
+  };
+
   render() {
     console.log(this.state.searchingResultDocumentURL);
     const { tags, suggestions, placeholder } = this.state;
+    const { selectedOption } = this.state;
     return (
       <div className="Upload">
         <div className="Input">
@@ -103,6 +120,13 @@ class Input extends React.Component {
             onChange={this.handleModelChange}
           ></input>
         </div>
+        <Select
+          className="mt-4 col-md-8 col-offset-4"
+          value={selectedOption}
+          onChange={this.handleChange}
+          options={options}
+        />
+
         <div className="Actions">
           <button onClick={this.sendTags}>Search</button>
         </div>
