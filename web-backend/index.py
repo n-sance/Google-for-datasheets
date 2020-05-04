@@ -85,7 +85,7 @@ def search():
     if (search_result == 'Nothing found'):
         return {}   #todo handler on frontend side
     else:
-        return send_file("page.pdf", as_attachment=True)
+        return send_file("result.pdf", as_attachment=True)
 
 
 @app.after_request
