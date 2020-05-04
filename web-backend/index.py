@@ -70,6 +70,7 @@ def search():
             keywords = TAG1;TAG2
     """
     component_name = request.args["component-name"].lower()
+    all_docs = request.args["all-docs-search"]
     files = glob(scraper.get_file_link("*"))
     files.sort(key=os.path.getmtime)
     print(component_name)
@@ -80,8 +81,11 @@ def search():
     print(tags)
     if len(tags) < 1:
         return "ERROR: NO TAGS"
-    search_result = scraper.search(file_id, tags)
-    return send_file("result.pdf", as_attachment=True)
+    search_result = scraper.search(file_id, tags, all_docs)
+    if (search_result == 'Nothing found'):
+        return {}   #todo handler on frontend side
+    else:
+        return send_file("page.pdf", as_attachment=True)
 
 
 @app.after_request

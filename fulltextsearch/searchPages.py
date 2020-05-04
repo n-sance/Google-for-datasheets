@@ -140,11 +140,11 @@ def search_in_download_doc(inputpdf, tags, pdfname):
     return pages
 
 
-# inputpdf = PdfFileReader(open("swau123.pdf", "rb"))
-# tags = ["development", "V"]
-# pdfname = "swau123.pdf"
+inputpdf = PdfFileReader(open("swau123.pdf", "rb"))
+tags = ["development", "V"]
+pdfname = "swau123.pdf"
 
-# if __name__ == '__main__':
-#     search_in_download_doc(inputpdf, tags, pdfname)
+if __name__ == '__main__':
+    search_in_download_doc(inputpdf, tags, pdfname)
 
 #print(search_across_all_docs(tags))
