@@ -33,6 +33,7 @@ class Input extends React.Component {
       selectedOption: null,
       all_docs_search_flag: false,
       latest_uploaded_doc_search_flag: false,
+      mode: "",
     };
     this.handleDelete = this.handleDelete.bind(this);
     this.handleAddition = this.handleAddition.bind(this);
@@ -71,7 +72,7 @@ class Input extends React.Component {
     var url = new URL("http://127.0.0.1:5050/search"),
       params = {
         "component-name": this.state.model,
-        "all-docs-search": true,
+        mode: this.state.selectedOption["value"],
         keywords: this.reformatTags(),
       };
     Object.keys(params).forEach((key) =>
@@ -102,6 +103,7 @@ class Input extends React.Component {
   handleChange = (selectedOption) => {
     this.setState({ selectedOption });
     console.log(`Option selected:`, selectedOption);
+    console.log(`Mode: `, this.state.mode);
   };
 
   render() {
