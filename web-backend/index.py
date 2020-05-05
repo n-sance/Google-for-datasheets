@@ -70,15 +70,7 @@ def search():
     component_name = request.args["component-name"].lower()
     searching_mode = request.args["mode"]
     #last_doc_only = 'true'
-
-    #casting flag states to bool
-    #all_docs_flag = True if all_docs == 'true' else False
-    #last_doc_only_flag = True if last_doc_only == 'true' else False
-
     files = glob(scraper.get_file_link("*"))
-
-
-
     #if user wants to search to all documentation related to component name (multisearch)
     if searching_mode == 'Components':
         print('Searching mode: Component related')
@@ -106,7 +98,7 @@ def search():
     search_result = scraper.search(file_id, tags, searching_mode)
     if (search_result == 'Nothing found'):
         print('going to send this')
-        return {'search': 'nothing found'}   #todo handler on frontend side
+        return "Record not found", 400
     else:
         return send_file("result.pdf", as_attachment=True)
 
@@ -121,4 +113,5 @@ def after_request(response):
 
 
 if __name__ == "__main__":
-    app.run(host='127.0.0.1', port='5050', debug=True)
+    #app.run(host='127.0.0.1', port='5050', debug=True)
+    app.run(host='0.0.0.0', port='5050', debug=True)

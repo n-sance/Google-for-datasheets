@@ -78,20 +78,30 @@ class Input extends React.Component {
     Object.keys(params).forEach((key) =>
       url.searchParams.append(key, params[key])
     );
-    fetch(url).then((response) => {
-      response.blob().then((blob) => {
-        let url = window.URL.createObjectURL(blob);
-        console.log("link is:  " + url);
-        this.setState({ searchingResultDocumentURL: url });
-        console.log("state is:      " + url);
-        const a = document.createElement("a");
-        a.href = url;
-        a.setAttribute("download", "file.pdf");
-        document.body.appendChild(a);
-        a.click();
+    fetch(url)
+      .then((response) => {
+        if (response.ok) {
+          response.blob().then((blob) => {
+            let url = window.URL.createObjectURL(blob);
+            console.log("link is:  " + url);
+            this.setState({ searchingResultDocumentURL: url });
+            console.log("state is:      " + url);
+            const a = document.createElement("a");
+            a.href = url;
+            a.setAttribute("download", "file.pdf");
+            document.body.appendChild(a);
+            a.click();
+          });
+        } else {
+          throw new Error("Something went wrong man");
+        }
+        //window.location.href = response.url;
+      })
+      .catch((error) => {
+        alert(
+          "Nothing was found. Check your searching parammeters and try again"
+        );
       });
-      //window.location.href = response.url;
-    });
   };
   handleModelChange(event) {
     this.setState({ model: event.target.value });

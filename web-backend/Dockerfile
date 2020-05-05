@@ -1,13 +1,11 @@
-FROM ubuntu:16.04
+FROM ubuntu:latest
 
 RUN apt-get update -y && \
-	apt-get install -y python-pip python-dev
-COPY web-backend/requirements.txt /requirements.txt
+	apt-get install -y python3 python3-pip python3-dev
 WORKDIR /
-RUN pip install -r requirements.txt
-COPY web-backend/ /
-ENTRYPOINT [ "python" ]
-CMD ["index.py"]
+COPY /web-backend/ /
+RUN pip3 install -r requirements.txt
 
-#build:  docker build -t <name of image>
-#run: docker run -it --rm -p 5050:5050 <name of image>
+
+CMD ["python3", "index.py"]
+

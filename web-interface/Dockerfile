@@ -8,7 +8,6 @@ WORKDIR ./
 ENV PATH ./node_modules/.bin:$PATH
 
 # add app
-COPY web-interface/ .
-
+COPY /web-interface/ .
 # start app
 CMD ["npm", "start"]

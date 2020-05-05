@@ -11,7 +11,7 @@ from elasticsearch import Elasticsearch
 import io
 
 my_folder_id = 'b1gcfjsk4iff6ub1luh8'
-
+elasticSearchAddress = 'http://fulltextsearch:9200'
 # Функция возвращает IAM-токен для аккаунта на Яндексе. В данный момент не используется
 
 
@@ -97,14 +97,14 @@ def index_after_uploading(pdfname):
     oauth_token = "AgAAAAADng-8AATuwdOGGyg3l0VHmz1w3Ighmvc"
     iam_token = get_iam_token(oauth_token)
     folder_id = my_folder_id
-    es = Elasticsearch()
+    es = Elasticsearch(elasticSearchAddress)
     vision_url = 'https://vision.api.cloud.yandex.net/vision/v1/batchAnalyze'
     answer = page_indexing(inputpdf, vision_url,
                            iam_token, folder_id, es, pdfname)
 
 
 def search_pages(inputpdf, tags, pdfname):
-    es = Elasticsearch()
+    es = Elasticsearch(elasticSearchAddress)
 
     query_from_user = ' '.join(tags)
     res = es.search(index=str.lower(pdfname), body={"query": {
@@ -150,7 +150,7 @@ def search_pages(inputpdf, tags, pdfname):
 
 
 def search_across_specific_docs(tags, component_name):
-    es = Elasticsearch()
+    es = Elasticsearch(elasticSearchAddress)
     print('component name inside ES:  ' + str(component_name) + ' ' + str(type(component_name)))
     # if component_name:
     #     tags.append(component_name[0].split('_')[0])
@@ -183,7 +183,7 @@ def search_across_specific_docs(tags, component_name):
 
 
 def search_across_all_docs(tags, component_name):
-    es = Elasticsearch()
+    es = Elasticsearch(elasticSearchAddress)
     print('component name inside ES:  ' + str(component_name) + ' ' + str(type(component_name)))
     if component_name:
         tags.append(component_name)
