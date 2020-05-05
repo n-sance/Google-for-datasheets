@@ -157,7 +157,7 @@ def search_across_specific_docs(tags, component_name):
     query_from_user = ' '.join(tags)
     indices = es.indices.get_alias("*")  # etract all created indexes
     filtered_indices = {}
-    for k, v in indices:
+    for k, v in indices.items():
         if k.startswith(component_name):
             filtered_indices[k] = v
     print('indices:   ' + str(indices) + ' ' + str(type(indices)))

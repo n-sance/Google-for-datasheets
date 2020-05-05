@@ -32,7 +32,7 @@ def save_file(meta, file):
 
 @app.route("/")
 def index():
-    return "you are a king"
+    return "backend server is running using port 5050"
 
 
 @app.route("/upload", methods=["POST"])
@@ -66,42 +66,47 @@ def search_by_fileid():
 
 @app.route("/search", methods=["GET"])
 def search():
-    file_id = []
 
     component_name = request.args["component-name"].lower()
-    all_docs = 'false' #request.args["all-docs-search"]
-    last_doc_only = 'true'
+    searching_mode = request.args["mode"]
+    #last_doc_only = 'true'
 
     #casting flag states to bool
-    all_docs_flag = True if all_docs == 'true' else False
-    last_doc_only_flag = True if last_doc_only == 'true' else False
+    #all_docs_flag = True if all_docs == 'true' else False
+    #last_doc_only_flag = True if last_doc_only == 'true' else False
 
     files = glob(scraper.get_file_link("*"))
 
-    #search files that relates to component name
-    matching_files = [f for f in files if component_name in f]
-    #sorting matching files in uploaded time order
-    matching_files.sort(key=os.path.getmtime)
-    print('mathcing files after sorting:  ' + str(matching_files))
+
+
     #if user wants to search to all documentation related to component name (multisearch)
-    if not all_docs_flag and not last_doc_only_flag:
-        file_id = matching_files
+    if searching_mode == 'Components':
+        print('Searching mode: Component related')
+        file_id = component_name
     #if user wants to search through all database and specifying component name is not necceassy (multisearch)
-    elif all_docs_flag and not last_doc_only_flag:
+    elif searching_mode == 'All':
+        print('Searching mode: All db')
         if not component_name:
-            file_id = []
+            file_id = ''
         else:
-            file_id.append(component_name)
+            file_id = component_name
     #if user wants to search in the latest uploaded document. specifying component is not neccessary
-    elif not all_docs_flag and last_doc_only_flag:
+    else:
+        #search files that relates to component name
+        matching_files = [f for f in files if component_name in f]
+        #sorting matching files in uploaded time order
+        matching_files.sort(key=os.path.getmtime)
+        print('mathcing files after sorting:  ' + str(matching_files))
+        print('Searching mode: latest file')
         print('latest file:  ' + matching_files[-1])
-        file_id.append(matching_files[-1])
+        file_id = matching_files[-1]
     tags = [t.lower() for t in request.args["keywords"].split(";")]
     if len(tags) < 1:
         return "ERROR: NO TAGS"
-    search_result = scraper.search(file_id, tags, all_docs_flag, last_doc_only_flag)
+    search_result = scraper.search(file_id, tags, searching_mode)
     if (search_result == 'Nothing found'):
-        return {}   #todo handler on frontend side
+        print('going to send this')
+        return {'search': 'nothing found'}   #todo handler on frontend side
     else:
         return send_file("result.pdf", as_attachment=True)
 
