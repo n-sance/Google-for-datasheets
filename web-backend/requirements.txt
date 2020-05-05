@@ -1,0 +1,6 @@
+PyPDF2
+requests
+argparse
+pathlib
+elasticsearch
+flask
