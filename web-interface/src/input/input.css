@@ -113,3 +113,6 @@ button {
   flex-direction: column;
   margin-top: 32px;
 }
+.selectpicker {
+  font-size: 15px !important;
+}

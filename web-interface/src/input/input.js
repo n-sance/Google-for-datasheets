@@ -122,12 +122,6 @@ class Input extends React.Component {
             onChange={this.handleModelChange}
           ></input>
         </div>
-        <Select
-          className="mt-4 col-md-8 col-offset-4"
-          value={selectedOption}
-          onChange={this.handleChange}
-          options={options}
-        />
 
         <div className="Actions">
           <button onClick={this.sendTags}>Search</button>
@@ -139,6 +133,12 @@ class Input extends React.Component {
           handleDelete={this.handleDelete}
           handleAddition={this.handleAddition}
           delimiters={delimiters}
+        />
+        <Select
+          className="mt-4 col-sm-2 col-offset-4 selectpicker"
+          value={selectedOption}
+          onChange={this.handleChange}
+          options={options}
         />
       </div>
     );

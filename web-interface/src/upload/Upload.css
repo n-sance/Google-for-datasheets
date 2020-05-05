@@ -4,7 +4,6 @@
   flex: 1;
   align-items: flex-start;
   text-align: left;
-  overflow: hidden;
 }
 
 .Content {
@@ -104,6 +103,7 @@ button {
 .Input {
   align-items: flex-start;
   width: 300px;
+  font-size: 14px;
 }
 
 button:disabled {
