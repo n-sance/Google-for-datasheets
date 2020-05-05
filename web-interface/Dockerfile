@@ -12,4 +12,3 @@ COPY web-interface/ .
 
 # start app
 CMD ["npm", "start"]
-#CMD ["sleep", "100000"]

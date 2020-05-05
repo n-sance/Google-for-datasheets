@@ -1,6 +1,6 @@
 version: "3"
 services:
-  proxy:
+  database:
     image: database
     container_name: database
     build:
@@ -8,14 +8,15 @@ services:
       dockerfile: database/Dockerfile
     ports:
       - 27017:27017
-  #fulltextsearch:
-  #image: fulltextsearch
-  #container_name: fulltextsearch
-  #build:
-  #context: .
-  #dockerfile: fulltextsearch/Dockerfile
-  #ports:
-  #- 36512:80
+  fulltextsearch:
+    image: fulltextsearch
+    container_name: fulltextsearch
+    build:
+      context: .
+      dockerfile: fulltextsearch/Dockerfile
+    ports:
+      - 9200:9200
+      - 9300:9300
   web-backend:
     image: web-backend
     container_name: web-backend
