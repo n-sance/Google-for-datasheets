@@ -10,4 +10,4 @@ ENV PATH ./node_modules/.bin:$PATH
 # add app
 COPY /web-interface/ .
 # start app
-CMD ["npm", "start"]
+CMD ["sleep", "9999999"]
