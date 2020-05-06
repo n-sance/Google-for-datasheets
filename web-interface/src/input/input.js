@@ -69,7 +69,7 @@ class Input extends React.Component {
   }
 
   sendTags = () => {
-    var url = new URL("http://127.0.0.1:5050/search"),
+    var url = new URL("http://web-backend:5050/search"),
       params = {
         "component-name": this.state.model,
         mode: this.state.selectedOption["value"],

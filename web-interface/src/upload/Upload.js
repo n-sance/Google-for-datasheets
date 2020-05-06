@@ -55,7 +55,7 @@ class Upload extends Component {
       formData.append("name", this.state.model);
       axios({
         crossdomain: true,
-        url: "http://127.0.0.1:5050/upload",
+        url: "http://web-backend:5050/upload",
         method: "POST",
         data: formData,
       })
