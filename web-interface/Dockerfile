@@ -7,7 +7,11 @@ WORKDIR /
 # add /app/node_modules/.bin to $PATH
 ENV PATH /node_modules/.bin:$PATH
 
+# to fix this issue: https://github.com/facebook/create-react-app/issues/8688
+ENV CI true
+
 # add app
 COPY /web-interface/ /
+
 # start app
-CMD ["sleep", "9999999"]
+CMD ["npm", "start"]
