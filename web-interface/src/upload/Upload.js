@@ -20,6 +20,7 @@ class Upload extends Component {
     this.sendRequest = this.sendRequest.bind(this);
     this.renderActions = this.renderActions.bind(this);
     this.handleModelChange = this.handleModelChange.bind(this);
+    this.ShowDetail = this.ShowDetail.bind(this);
   }
 
   handleModelChange(event) {
@@ -68,12 +69,18 @@ class Upload extends Component {
     });
   }
 
+  ShowDetail() {
+    return (
+      <div className="loader center">
+        <i className="fa fa-cog fa-spin" />
+      </div>
+    );
+  }
   renderProgress(file) {
     const uploadProgress = this.state.uploadProgress[file.name];
     if (this.state.uploading || this.state.successfullUploaded) {
       return (
         <div className="ProgressWrapper">
-          <Progress progress={uploadProgress ? uploadProgress.percentage : 0} />
           <img
             className="CheckIcon"
             alt="done"
@@ -84,6 +91,7 @@ class Upload extends Component {
             }}
           />
         </div>
+        //<div>{this.ShowDetail()}</div>
       );
     }
   }
@@ -98,6 +106,16 @@ class Upload extends Component {
         >
           Clear
         </button>
+      );
+    } else if (this.state.files < 0 || this.state.uploading) {
+      return (
+        <div>{this.ShowDetail()}</div>
+        // <button
+        //   disabled={this.state.files.length < 0 || this.state.uploading}
+        //   onClick={this.uploadFiles}
+        // >
+        //   Upload
+        // </button>
       );
     } else {
       return (

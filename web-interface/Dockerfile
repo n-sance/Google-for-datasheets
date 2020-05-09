@@ -14,4 +14,5 @@ ENV CI true
 COPY /web-interface/ /
 
 # start app
+
 CMD ["npm", "start"]

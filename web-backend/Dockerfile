@@ -6,6 +6,6 @@ WORKDIR /
 COPY /web-backend/ /
 RUN pip3 install -r requirements.txt
 
-
-CMD ["python3", "index.py"]
+CMD ["sleep", "10000"]
+#CMD ["python3", "index.py"]
 

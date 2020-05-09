@@ -3,7 +3,7 @@ import "./App.css";
 import Input from "./input/input";
 import Upload from "./upload/Upload";
 import PdfView from "./pdf/pdf_view";
-
+import Loader from "./loader/Loader";
 class App extends Component {
   render() {
     return (
